@@ -1,12 +1,14 @@
 package config
 
 type Config struct {
-	ProjectName string `mapstructure:"project_name" json:"project_name"`
-	MD5Salt     string `mapstructure:"md5_salt" json:"md5_salt"`
-	RunMod      string `mapstructure:"run_mod" json:"run_mod"`
-	Mysql       Mysql  `mapstructure:"mysql" json:"mysql"`
-	Logger      Logger `mapstructure:"logger" json:"logger"`
-	Jwt         Jwt    `mapstructure:"jwt" json:"jwt"`
+	ProjectName   string `mapstructure:"project_name" json:"project_name"`
+	MD5Salt       string `mapstructure:"md5_salt" json:"md5_salt"`
+	RunMod        string `mapstructure:"run_mod" json:"run_mod"`
+	CaptchaExpireSec uint8  `mapstructure:"captcha_expire_sec" json:"captcha_expire_sec"`
+	Mysql         Mysql  `mapstructure:"mysql" json:"mysql"`
+	Logger        Logger `mapstructure:"logger" json:"logger"`
+	Jwt           Jwt    `mapstructure:"jwt" json:"jwt"`
+	Redis         Redis  `mapstructure:"redis" json:"redis"`
 }
 
 // Mysql 数据库配置
@@ -29,4 +31,11 @@ type Logger struct {
 
 type Jwt struct {
 	SigningKey string `mapstructure:"signing_key" json:"signing_key"`
+}
+
+type Redis struct {
+	Host     string `mapstructure:"host" json:"host"`
+	Port     uint32 `mapstructure:"port" json:"port"`
+	Password string `mapstructure:"password" json:"password"`
+	Database uint8  `mapstructure:"database" json:"database"`
 }

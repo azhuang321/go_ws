@@ -1,5 +1,6 @@
-project_name: "mychat"
+project_name: "user_api"
 md5_salt: "test"
+captcha_expire_sec: 30
 mysql:
   host: "127.0.0.1"
   port: 3306
@@ -17,3 +18,8 @@ logger:
 jwt:
   signing_key: "test"
 
+redis:
+  host: "127.0.0.1"
+  port: 6379
+  password: ""
+  database: 0

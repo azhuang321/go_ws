@@ -2,11 +2,22 @@ package api
 
 import (
 	"github.com/gin-gonic/gin"
-	"net/http"
+	"user_api/forms"
+
+	"user_api/forms/user"
 )
 
-func Login(c *gin.Context) {
-	c.JSON(http.StatusOK, gin.H{
-		"msg": "test",
-	})
+func Register(ctx *gin.Context) {
+	registerForm := user.RegisterFrom{}
+	if ok := forms.BindJsonAndValidate(ctx, &registerForm); !ok {
+		return
+	}
+
+
 }
+
+func Login(ctx *gin.Context) {
+
+}
+
+
