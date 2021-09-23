@@ -2,20 +2,19 @@ package initialize
 
 import (
 	"fmt"
+	"go.uber.org/zap"
 	"time"
 
-	"go.uber.org/zap"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 	"moul.io/zapgorm2"
 
-	"user_srv/global"
+	"user_api/global"
 )
 
 func InitDB() {
 	logger := zapgorm2.New(zap.L())
 	logger.SetAsDefault()
-
 	dsn := fmt.Sprintf(
 		"%s:%s@tcp(%s:%d)/%s?charset=utf8mb4&parseTime=True&loc=Local",
 		global.Config.Mysql.Username,
