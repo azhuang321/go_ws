@@ -49,9 +49,9 @@ layui.config({
   ,'upload-mobile': 'upload-mobile'
   ,'layim-mobile': 'layim-mobile'
 }).use('layim-mobile', function(){
-
-
-
+  var localTest = layui.data("jwt");
+  let loginUserInfo = localTest['13774246150']
+  console.log(loginUserInfo);
 
   let testMsg = new proto.Msg.Msg();
   testMsg.setType(proto.Msg.MsgType.IMAGE)
@@ -65,7 +65,7 @@ layui.config({
 
 
 
-  const url = 'ws://wslhost:9001/v1/ws/test';
+  const url = 'ws://wslhost:9002/v1/ws/test?token=' + loginUserInfo.token;
   let firstHeartbeat = true;
   let websocketHeartbeatJs = new WebsocketHeartbeatJs({
     url: url,

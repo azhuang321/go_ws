@@ -3,14 +3,14 @@ package initialize
 import (
 	"github.com/gin-gonic/gin"
 
-	"ws_srv/middlerwares"
+	globalMiddlewares "ws_srv/middlerwares/global"
 	"ws_srv/router"
 )
 
 func Routers() *gin.Engine {
 	Router := gin.Default()
 
-	Router.Use(middlewares.Cors())
+	Router.Use(globalMiddlewares.Cors())
 
 	ApiRouter := Router.Group("/v1")
 	router.InitWsRouter(ApiRouter)

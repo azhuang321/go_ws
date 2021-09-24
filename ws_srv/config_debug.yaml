@@ -1,5 +1,7 @@
-project_name: "mychat"
+project_name: "ws_srv"
 md5_salt: "test"
+captcha_expire_sec: 30
+user_srv_name: "user_srv"
 mysql:
   host: "127.0.0.1"
   port: 3306
@@ -16,4 +18,15 @@ logger:
 
 jwt:
   signing_key: "test"
+  expire_time_day: 15
 
+redis:
+  host: "127.0.0.1"
+  port: 6379
+  password: ""
+  database: 0
+
+consul:
+  host: "127.0.0.1"
+  port: 8500
+  tags: ["test","user_srv"]

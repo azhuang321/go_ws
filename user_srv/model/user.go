@@ -46,7 +46,7 @@ func CheckPwd(mobile,password string) (isRight bool,userInfo *dao.Users, err err
 		return false,nil, err
 	}
 	if userInfo.ID <= 0 || userInfo.Password != utils.MD5(password) {
-		return false, nil,nil
+		return false, userInfo,nil
 	}
 	return true, userInfo,nil
 }

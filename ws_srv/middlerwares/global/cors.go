@@ -1,4 +1,4 @@
-package middlewares
+package global
 
 import (
 	"net/http"

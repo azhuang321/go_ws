@@ -1,0 +1,40 @@
+syntax = "proto3";
+option go_package="proto/gen/userpb;userpb";
+
+import "google/protobuf/empty.proto";
+
+service User {
+    rpc CreateUser(CreateUserRequest) returns (google.protobuf.Empty);
+    rpc IsExistUser(UserRequest) returns (IsExistUserResponse);
+    rpc GetUserInfo(UserRequest) returns (GetUserInfoResponse);
+    rpc CheckPwd(CreateUserRequest) returns (CheckPwdResponse);
+}
+
+message UserRequest {
+    string mobile = 1;
+}
+message IsExistUserResponse {
+    bool is_exist = 1;
+}
+
+message CreateUserRequest {
+    string mobile = 1;
+    string password = 2;
+}
+
+message GetUserInfoResponse {
+    uint32 id = 1;
+    string mobile = 2;
+    string password = 3;
+}
+
+message CheckPwdResponse {
+    bool is_right = 1;
+    GetUserInfoResponse user_info = 2;
+}
+
+
+
+//protoc -I=./proto --go_out=plugins=grpc:. proto/user.proto
+//cp proto/user.proto ../user_api/proto/
+//cp proto/gen/userpb/user.pb.go ../user_api/proto/gen/go/userpb/user.pb.go
