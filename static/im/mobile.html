@@ -65,28 +65,45 @@ layui.config({
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+  //设置心跳信息
+  let pingMsgObj = new proto.Msg.HeartMsg()
+  pingMsgObj.setPing("ping")
+  let pingBinary = pingMsgObj.serializeBinary()
+
   const url = 'ws://wslhost:9002/v1/ws/test?token=' + loginUserInfo.token;
   let firstHeartbeat = true;
   let websocketHeartbeatJs = new WebsocketHeartbeatJs({
     url: url,
     pingTimeout: 8000,
-    pongTimeout: 8000
+    pongTimeout: 8000,
+    pingMsg: pingBinary
   });
   websocketHeartbeatJs.setBinaryType()
-  console.dir(`new WebsocketHearbeatJs to connect ${url}`);
+  console.log(`连接到: ${url}`);
 
   websocketHeartbeatJs.onopen = function () {
-    console.dir('connect success', 'cadetblue');
-    console.dir('send massage: test', 'cadetblue');
+    console.log('连接成功...');
     websocketHeartbeatJs.send('test');
     websocketHeartbeatJs.send(binary)
 
     setTimeout(() => {
-      console.dir(`wait ${websocketHeartbeatJs.opts.pingTimeout} ms will hava '${websocketHeartbeatJs.opts.pingMsg}'`, 'cadetblue');
+      console.dir(`等待心跳 ${websocketHeartbeatJs.opts.pingTimeout} ms 将会有心跳消息: '${websocketHeartbeatJs.opts.pingMsg}' 到达`);
     }, 1500);
   }
   websocketHeartbeatJs.onmessage = function (e) {
     console.dir(`onmessage: ${e.data}`);
+
     if (e.data == websocketHeartbeatJs.opts.pingMsg && firstHeartbeat) {
       setTimeout(() => {
         console.dir(`Close your network, wait ${websocketHeartbeatJs.opts.pingTimeout + websocketHeartbeatJs.opts.pongTimeout}+ ms, websocket will reconnect`, 'cadetblue');
@@ -95,9 +112,26 @@ layui.config({
     }
   }
   websocketHeartbeatJs.onreconnect = function () {
-    console.dir(`reconnecting...`, 'chocolate');
-    console.dir(`tips: if you network closing, please open network, reconnect will success`, 'brown');
+    console.log(`断线,正在重连中...`);
   }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
