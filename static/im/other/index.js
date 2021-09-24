@@ -42,6 +42,7 @@ function WebsocketHeartbeatJs({
 }
 WebsocketHeartbeatJs.prototype.createWebSocket = function(){
     try {
+        // this.ws = new WebSocket(this.opts.url,["protocol1","protocol2"] );
         this.ws = new WebSocket(this.opts.url);
         this.initEventHandle();
     } catch (e) {

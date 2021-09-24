@@ -7,32 +7,6 @@
   <title>WAP 版演示</title>
   <link rel="stylesheet" href="layui/css/layui.css">
 </head>
-
-<style>
-  .logs {
-    padding: 40px 0 0 40px;
-  }
-
-  .logs div {
-    line-height: 26px;
-    font-size: 16px;
-  }
-
-  .brown {
-    color: brown;
-    font-size: 14px!important;
-  }
-  .cadetblue{
-    color: cadetblue;
-  }
-  .chocolate{
-    color: chocolate;
-  }
-  .gray {
-    color: #666666;
-  }
-</style>
-
 <body>
 
 <script src="layui/layui.js"></script>
@@ -53,13 +27,27 @@ layui.config({
   let loginUserInfo = localTest['13774246150']
   console.log(loginUserInfo);
 
-  let testMsg = new proto.Msg.Msg();
-  testMsg.setType(proto.Msg.MsgType.IMAGE)
 
-  let binary = testMsg.serializeBinary()
-  console.dir(binary)
-  let testMsg1 = proto.Msg.Msg.deserializeBinary(binary)
-  console.dir(testMsg1.getType())
+
+
+
+
+
+
+
+
+
+
+
+
+
+  // let testMsg = new proto.Msg.Msg();
+  // testMsg.setType(proto.Msg.MsgType.IMAGE)
+  //
+  // let binary = testMsg.serializeBinary()
+  // console.dir(binary)
+  // let testMsg1 = proto.Msg.Msg.deserializeBinary(binary)
+  // console.dir(testMsg1.getType())
 
 
 
@@ -94,8 +82,6 @@ layui.config({
 
   websocketHeartbeatJs.onopen = function () {
     console.log('连接成功...');
-    websocketHeartbeatJs.send('test');
-    websocketHeartbeatJs.send(binary)
 
     setTimeout(() => {
       console.dir(`等待心跳 ${websocketHeartbeatJs.opts.pingTimeout} ms 将会有心跳消息: '${websocketHeartbeatJs.opts.pingMsg}' 到达`);
@@ -310,14 +296,12 @@ layui.config({
   });
   
   //创建一个会话
-  /*
   layim.chat({
     id: 111111
     ,name: '许闲心'
     ,type: 'kefu' //friend、group等字符，如果是group，则创建的是群聊
     ,avatar: 'http://tp1.sinaimg.cn/1571889140/180/40030060651/1'
   });
-  */
 
   
   //触发点击“新的朋友”
@@ -378,31 +362,35 @@ layui.config({
   
   //触发发送消息
   layim.on('sendMessage', function(data){
-    var To = data.to;
-    //console.log(data);
+    // var To = data.to;
+    // console.log(JSON.stringify(data));
 
-    //演示自动回复
-    setTimeout(function(){
-      var obj = {};
-      if(To.type === 'group'){
-        obj = {
-          username: '模拟群员'+(Math.random()*100|0)
-          ,avatar: layui.cache.layimAssetsPath + 'images/face/'+ (Math.random()*72|0) + '.gif'
-          ,id: To.id
-          ,type: 'group'
-          ,content: autoReplay[Math.random()*9|0]
-        }
-      } else {
-        obj = {
-          username: To.name
-          ,avatar: To.avatar
-          ,id: To.id
-          ,type: To.type
-          ,content: autoReplay[Math.random()*9|0]
-        }
-      }
-      layim.getMessage(obj);
-    }, 3000);
+    let mine = new proto.Msg.Mine()
+    mine.setUsername(data.mine.username)
+    mine.setAvatar(data.mine.avatar)
+    mine.setId(data.mine.id)
+    mine.setMine(data.mine.mine)
+    mine.setContent(data.mine.content)
+
+    let to = new proto.Msg.To()
+    to.setUsername(data.to.username)
+    to.setAvatar(data.to.avatar)
+    to.setId(data.to.id)
+    to.setType(data.to.type)
+    to.setCid(data.to.cid)
+    to.setContent(data.to.content)
+    to.setTimestamp(data.to.timestamp)
+    to.setName(data.to.name)
+    to.setHistorytime(data.to.historyTime)
+    to.setSign(data.to.sign)
+
+    let sendMsgObj = new proto.Msg.SendMsg()
+    sendMsgObj.setMine(mine)
+    sendMsgObj.setTo(to)
+
+    let sendMsgObjBinary = sendMsgObj.serializeBinary()
+    websocketHeartbeatJs.send(sendMsgObjBinary);
+    websocketHeartbeatJs.send(JSON.stringify(data));
   });
   
   //模拟收到一条好友消息

@@ -1,20 +1,42 @@
 syntax = "proto3";
-package Msg;
-option go_package="proto/gen/go/msgpb;msgpb";
 
-enum MsgType {
-    TEXT = 0;
-    IMAGE = 1;
-}
+package Msg;
+
+option go_package = "proto/gen/go/msgpb;msgpb";
+
 
 message HeartMsg {
     string ping = 1;
 }
 
-message Msg {
-    MsgType type = 1;
-    uint32 uid = 2;
-    string content = 3;
+//自身消息
+message Mine {
+    string username = 1;
+    string avatar = 2;
+    uint32 id = 3;
+    bool mine = 4;
+    string content = 5;
+}
+message To {
+    string username = 1;
+    string avatar = 2;
+    uint32 id = 3;
+    string type = 4;
+    uint32 cid = 5;
+    string content = 6;
+    uint32 timestamp = 7;
+    string name = 8;
+    uint32 historyTime = 9;
+    string sign = 10;
+}
+
+
+message SendMsg {
+    Mine mine = 1;
+    To to = 2;
+
 }
 
 //protoc -I=proto/ --js_out=import_style=commonjs,binary:proto/gen/js proto/message.proto
+//browserify exports.js -o message_pb_web.js
+//mv .\message_pb.js ..\..\..\..\static\im\other\message_pb_web.js
