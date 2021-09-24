@@ -33,6 +33,7 @@ type Logger struct {
 
 type Jwt struct {
 	SigningKey string `mapstructure:"signing_key" json:"signing_key"`
+	ExpireTimeDay uint8 `mapstructure:"expire_time_day" json:"expire_time_day"`
 }
 
 type Redis struct {

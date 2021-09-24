@@ -11,7 +11,7 @@ import (
 )
 
 // ErrReturn 错误快捷返回
-func ErrReturn(c *gin.Context, errCode int, err errno.Errno) {
+func ErrReturn(c *gin.Context, errCode int, err *errno.Errno) {
 	c.JSON(errCode, gin.H{
 		"code": err.Code,
 		"msg": err.Message,

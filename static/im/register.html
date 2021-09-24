@@ -14,18 +14,36 @@
     <div class="layui-row">
         <form class="layui-form">
             <div class="layui-form-item">
-                <label class="layui-form-label">用户名</label>
+                <label class="layui-form-label">手机号</label>
                 <div class="layui-input-block">
-                    <input type="text" name="username" placeholder="请输入" autocomplete="off" class="layui-input">
+                    <input type="text" name="mobile" placeholder="请输入" value="13774246150" autocomplete="off" class="layui-input">
                 </div>
             </div>
             <div class="layui-form-item">
                 <label class="layui-form-label">密码</label>
                 <div class="layui-input-block">
-                    <input type="text" name="password" placeholder="请输入" autocomplete="off" class="layui-input">
+                    <input type="text" name="password" placeholder="请输入" value="123123" autocomplete="off" class="layui-input">
                 </div>
             </div>
-
+            <div class="layui-form-item">
+                <label class="layui-form-label">重复密码</label>
+                <div class="layui-input-block">
+                    <input type="text" name="re_password" placeholder="请输入" value="123123" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">验证码</label>
+                <div class="layui-input-block">
+                    <input type="text" name="code" placeholder="请输入" value="123123" autocomplete="off" class="layui-input">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">验证码</label>
+                <div class="layui-input-block" onclick="getCaptcha()">
+                    <input type="hidden" id="captcha_id" name="captcha_id" placeholder="请输入" autocomplete="off" class="layui-input">
+                    <img id="captchaImg" src="" />
+                </div>
+            </div>
             <div class="layui-form-item">
                 <div class="layui-input-block">
                     <button class="layui-btn" lay-submit lay-filter="formDemo">立即提交</button>
@@ -38,14 +56,39 @@
 
 <script src="layui/layui.js"></script>
 <script type="application/javascript">
-    //Demo
-    layui.use('form', function () {
-        var form = layui.form;
-
+    let getCaptcha = {}
+    layui.use(['form','jquery'], function () {
+        let form = layui.form
+            ,$ = layui.$
+        getCaptcha =function(){
+            $.ajax({url:"http://wslhost:9001/v1/captcha",success:function(result){
+                    if (result.code == 0) {
+                        $("#captcha_id").val(result.data.captchaId);
+                        $("#captchaImg").attr("src",result.data.picPath);
+                    }
+                }});
+        }
+        getCaptcha()
         //监听提交
         form.on('submit(formDemo)', function (data) {
+            $.ajax({url:"http://wslhost:9001/v1/user/register",
+                method:"POST",
+                dataType:"json",
+                data: JSON.stringify(data.field),
+                success:function(result){
+                    if (result.code == 0) {
+                        $("#re_password").val(result.data.captchaId);
+                        $("#captchaImg").attr("src",result.data.picPath);
+                        layer.msg(result.msg,{icon:1})
+                    }else{
+                        layer.msg(result.msg,{icon:2})
+                    }
+                },
+                error:function(error){
+                    layer.msg(error.responseJSON.msg,{icon:2})
+                }
+            });
 
-            layer.msg(JSON.stringify(data.field));
             return false;
         });
     });

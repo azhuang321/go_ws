@@ -19,7 +19,7 @@ func GetCaptcha(c *gin.Context) {
 	if err != nil {
 		zap.S().Errorf("生成验证码错误:%s", err.Error())
 		rErr := errno.ErrRuntime.ReplaceMsg("生成验证码错误")
-		utils.ErrReturn(c, http.StatusInternalServerError, rErr)
+		utils.ErrReturn(c, http.StatusInternalServerError, &rErr)
 		return
 	}
 	utils.OkReturn(c,gin.H{

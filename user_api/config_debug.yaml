@@ -18,6 +18,7 @@ logger:
 
 jwt:
   signing_key: "test"
+  expire_time_day: 15
 
 redis:
   host: "127.0.0.1"

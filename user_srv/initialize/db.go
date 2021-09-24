@@ -2,6 +2,7 @@ package initialize
 
 import (
 	"fmt"
+	gormlogger "gorm.io/gorm/logger"
 	"time"
 
 	"go.uber.org/zap"
@@ -14,7 +15,8 @@ import (
 
 func InitDB() {
 	logger := zapgorm2.New(zap.L())
-	logger.SetAsDefault()
+	logger.LogLevel = gormlogger.Info
+	logger.IgnoreRecordNotFoundError = true
 
 	dsn := fmt.Sprintf(
 		"%s:%s@tcp(%s:%d)/%s?charset=utf8mb4&parseTime=True&loc=Local",

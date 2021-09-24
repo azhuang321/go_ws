@@ -16,6 +16,6 @@ func initFrameWork() {
 
 func main() {
 	initFrameWork()
-	//gorm.io/gen
+
 	core.StartServer()
 }
