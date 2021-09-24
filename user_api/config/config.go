@@ -9,6 +9,7 @@ type Config struct {
 	Logger        Logger `mapstructure:"logger" json:"logger"`
 	Jwt           Jwt    `mapstructure:"jwt" json:"jwt"`
 	Redis         Redis  `mapstructure:"redis" json:"redis"`
+	Consul         Consul  `mapstructure:"consul" json:"consul"`
 }
 
 // Mysql 数据库配置
@@ -38,4 +39,10 @@ type Redis struct {
 	Port     uint32 `mapstructure:"port" json:"port"`
 	Password string `mapstructure:"password" json:"password"`
 	Database uint8  `mapstructure:"database" json:"database"`
+}
+
+type Consul struct {
+	Host     string `mapstructure:"host" json:"host"`
+	Port     uint32 `mapstructure:"port" json:"port"`
+	Tags []string `mapstructure:"tags" json:"tags"`
 }

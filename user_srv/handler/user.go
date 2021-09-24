@@ -14,7 +14,7 @@ import (
 type UserService struct{}
 
 func (u UserService) CreateUser(ctx context.Context, request *userpb.UserInfo) (*emptypb.Empty, error) {
-	_, err := model.CreateUser(request.Username, request.Password)
+	_, err := model.CreateUser(request.Mobile, request.Password)
 	if err != nil {
 		return nil, status.Error(codes.Unknown, "数据库错误")
 	}

@@ -2,10 +2,12 @@ package initialize
 
 import (
 	"fmt"
-	"user_srv/global"
 
 	"github.com/fsnotify/fsnotify"
+	uuid "github.com/satori/go.uuid"
 	"github.com/spf13/viper"
+
+	"user_srv/global"
 )
 
 func GetEnvInfo(env string) string {
@@ -15,6 +17,8 @@ func GetEnvInfo(env string) string {
 
 // InitConfig 初始化框架配置
 func InitConfig() {
+	global.Config.Uuid = uuid.NewV4().String()
+
 	runMod := GetEnvInfo("pro")
 	var configFileName string
 	configFileNamePrefix := "config"

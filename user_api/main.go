@@ -11,6 +11,7 @@ func initFrameWork() {
 	initialize.InitDB()
 	initialize.InitTranslate()
 	initialize.InitRedisPool()
+	initialize.InitUserSrvConn()
 }
 
 func main() {

@@ -26,9 +26,10 @@ var (
 	OK                  = &Errno{Code: 0, Message: "success"}
 	InternalServerError = &Errno{Code: 10001, Message: "内部服务器错误"}
 	ErrBind             = &Errno{Code: 10002, Message: "绑定请求体到 struct 时发生错误"}
-	ErrRuntime             = &Errno{Code: 10003, Message: "程序运行错误"}
+	ErrRuntime          = &Errno{Code: 10003, Message: "程序运行错误"}
 
-	ErrUserNotFound = &Errno{Code: 20101, Message: "用户不存在"}
+	UserSrvErr = &Errno{Code:    100101, Message: "用户服务错误"}
+
+	ErrUserNotFound  = &Errno{Code: 20101, Message: "用户不存在"}
 	ErrRequestParams = &Errno{Code: 20102, Message: "请求参数错误"}
 )
-

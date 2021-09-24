@@ -5,6 +5,7 @@ import (
 	"gorm.io/gorm"
 
 	"user_api/config"
+	"user_api/proto/gen/go/userpb"
 )
 
 var (
@@ -13,4 +14,6 @@ var (
 	GClient *redis.Client
 
 	Config = &config.Config{}
+
+	UserSrvClient  userpb.UserClient
 )
