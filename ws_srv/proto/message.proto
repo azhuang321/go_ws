@@ -3,14 +3,18 @@ package Msg;
 option go_package="proto/gen/go/msgpb;msgpb";
 
 enum MsgType {
-    Pong = 0;
-    TEXT = 1;
-    IMAGE = 3;
+    TEXT = 0;
+    IMAGE = 1;
+}
+
+message HeartMsg {
+    string ping = 1;
 }
 
 message Msg {
     MsgType type = 1;
-    string content = 2;
+    uint32 uid = 2;
+    string content = 3;
 }
 
 //protoc -I=proto/ --js_out=import_style=commonjs,binary:proto/gen/js proto/message.proto
