@@ -1,15 +1,16 @@
 package config
 
 type Config struct {
-	ProjectName   string `mapstructure:"project_name" json:"project_name"`
-	MD5Salt       string `mapstructure:"md5_salt" json:"md5_salt"`
-	RunMod        string `mapstructure:"run_mod" json:"run_mod"`
+	ProjectName      string `mapstructure:"project_name" json:"project_name"`
+	MD5Salt          string `mapstructure:"md5_salt" json:"md5_salt"`
+	RunMod           string `mapstructure:"run_mod" json:"run_mod"`
 	CaptchaExpireSec uint8  `mapstructure:"captcha_expire_sec" json:"captcha_expire_sec"`
-	Mysql         Mysql  `mapstructure:"mysql" json:"mysql"`
-	Logger        Logger `mapstructure:"logger" json:"logger"`
-	Jwt           Jwt    `mapstructure:"jwt" json:"jwt"`
-	Redis         Redis  `mapstructure:"redis" json:"redis"`
-	Consul         Consul  `mapstructure:"consul" json:"consul"`
+	UserSrvName      string `mapstructure:"user_srv_name" json:"user_srv_name"`
+	Mysql            Mysql  `mapstructure:"mysql" json:"mysql"`
+	Logger           Logger `mapstructure:"logger" json:"logger"`
+	Jwt              Jwt    `mapstructure:"jwt" json:"jwt"`
+	Redis            Redis  `mapstructure:"redis" json:"redis"`
+	Consul           Consul `mapstructure:"consul" json:"consul"`
 }
 
 // Mysql 数据库配置
@@ -42,7 +43,7 @@ type Redis struct {
 }
 
 type Consul struct {
-	Host     string `mapstructure:"host" json:"host"`
-	Port     uint32 `mapstructure:"port" json:"port"`
+	Host string   `mapstructure:"host" json:"host"`
+	Port uint32   `mapstructure:"port" json:"port"`
 	Tags []string `mapstructure:"tags" json:"tags"`
 }

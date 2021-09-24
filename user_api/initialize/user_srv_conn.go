@@ -16,7 +16,7 @@ func InitUserSrvConn() {
 
 	// 通过负载均衡器 去注册中心拿用户服务
 	userConn, err := grpc.Dial(
-		fmt.Sprintf("consul://%s:%d/%s", consulInfo.Host, consulInfo.Port, global.Config.ProjectName),
+		fmt.Sprintf("consul://%s:%d/%s", consulInfo.Host, consulInfo.Port, global.Config.UserSrvName),
 		grpc.WithInsecure(),
 		grpc.WithDefaultServiceConfig(`{"loadBalancingPolicy":"round_robin"}`),
 	)

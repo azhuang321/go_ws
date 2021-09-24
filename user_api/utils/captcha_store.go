@@ -7,6 +7,8 @@ import (
 	"user_api/global"
 )
 
+var Store = CaptchaRedisStore{}
+
 type CaptchaRedisStore struct {}
 
 func (c CaptchaRedisStore)Set(id string, value string) error {

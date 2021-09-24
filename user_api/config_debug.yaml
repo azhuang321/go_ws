@@ -1,6 +1,7 @@
 project_name: "user_api"
 md5_salt: "test"
 captcha_expire_sec: 30
+user_srv_name: "user_srv"
 mysql:
   host: "127.0.0.1"
   port: 3306

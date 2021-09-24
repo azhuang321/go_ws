@@ -35,7 +35,7 @@ func InitConfig() {
 		return
 	}
 
-	if err := v.Unmarshal(global.Config); err != nil {
+	if err := v.Unmarshal(&global.Config); err != nil {
 		fmt.Printf("赋值配置信息失败：%s\n", err.Error())
 		return
 	}
@@ -47,7 +47,7 @@ func InitConfig() {
 		v.OnConfigChange(func(e fsnotify.Event) {
 			fmt.Printf("配置信息改变：%s\n", e.Name)
 			_ = v.ReadInConfig() // 读取配置数据
-			_ = v.Unmarshal(global.Config)
+			_ = v.Unmarshal(&global.Config)
 			global.Config.RunMod = runMod
 			fmt.Printf("配置信息：%+v\n", global.Config)
 		})

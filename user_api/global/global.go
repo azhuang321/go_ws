@@ -3,7 +3,6 @@ package global
 import (
 	"github.com/go-redis/redis/v8"
 	"gorm.io/gorm"
-
 	"user_api/config"
 	"user_api/proto/gen/go/userpb"
 )
@@ -13,7 +12,7 @@ var (
 
 	GClient *redis.Client
 
-	Config = &config.Config{}
+	Config  *config.Config
 
-	UserSrvClient  userpb.UserClient
+	UserSrvClient userpb.UserClient
 )
