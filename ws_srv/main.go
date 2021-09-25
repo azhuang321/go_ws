@@ -12,6 +12,7 @@ func initFrameWork() {
 	initialize.InitTranslate()
 	initialize.InitRedisPool()
 	initialize.InitUserSrvConn()
+	initialize.InitSocketRouter()
 }
 
 func main() {

@@ -1,8 +1,45 @@
 syntax = "proto3";
-
 package Msg;
-
 option go_package = "proto/gen/go/msgpb;msgpb";
+
+
+
+enum MsgType {
+    PING = 0;
+    AUTH = 1;
+    TEXT = 2;
+}
+
+message Content {
+    Mine mine = 1;
+    To to = 2;
+}
+
+message Msg {
+    MsgType msg_type = 1;
+    string path = 2;
+    oneof payload {
+        string token = 3;
+        Content content = 4;
+    }
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+message SendMsg {
+    Mine mine = 1;
+    To to = 2;
+}
 
 
 message HeartMsg {
@@ -26,17 +63,13 @@ message To {
     string content = 6;
     uint32 timestamp = 7;
     string name = 8;
-    uint32 historyTime = 9;
+    uint64 history_time = 9;
     string sign = 10;
 }
 
 
-message SendMsg {
-    Mine mine = 1;
-    To to = 2;
 
-}
-
+//protoc -I=proto/ --go_out=plugins=grpc:. proto/message.proto
 //protoc -I=proto/ --js_out=import_style=commonjs,binary:proto/gen/js proto/message.proto
 //browserify exports.js -o message_pb_web.js
 //mv .\message_pb.js ..\..\..\..\static\im\other\message_pb_web.js

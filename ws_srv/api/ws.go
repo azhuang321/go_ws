@@ -1,16 +1,22 @@
 package api
 
 import (
-	"encoding/json"
 	"fmt"
 	"github.com/gin-gonic/gin"
+	"github.com/gobwas/ws/wsutil"
 	"github.com/gorilla/websocket"
 	"go.uber.org/zap"
 	"google.golang.org/protobuf/proto"
+	"io"
 	"log"
+	"net"
 	"net/http"
-	"sync"
+	"runtime"
+	"ws_srv/global"
+	"ws_srv/utils"
 	"ws_srv/proto/gen/go/msgpb"
+	"github.com/gobwas/httphead"
+	"github.com/gobwas/ws"
 )
 
 var upGrader = websocket.Upgrader{
@@ -21,19 +27,12 @@ var upGrader = websocket.Upgrader{
 		return true
 	},
 }
-var ClientList = make(map[string]*User)
-
-type User struct {
-	Conn *websocket.Conn
-	Id   string
-	Mux  sync.Mutex
-}
-type TypeMessage struct {
-	Type interface{} `json:"type"`
-	Data interface{} `json:"data"`
+type UserConn struct{
+	UserClaims *utils.CustomClaims
+	UserConn *websocket.Conn
 }
 
-var KefuList = make(map[string][]*User)
+var UserClientConn = make(map[uint32]*UserConn)
 
 func Test(c *gin.Context) {
 	conn, err := upGrader.Upgrade(c.Writer, c.Request, nil)
@@ -41,104 +40,138 @@ func Test(c *gin.Context) {
 		zap.S().Errorf("初始websocket失败:%s", err.Error())
 		return
 	}
-	user := &User{
-		Conn: conn,
-		Id:   "1",
-	}
-	// 挤下线
-	oldUser, ok := ClientList[user.Id]
-	if oldUser != nil || ok {
-		msg := TypeMessage{
-			Type: "close",
-			Data: user.Id,
-		}
-		str, _ := json.Marshal(msg)
-		if err := oldUser.Conn.WriteMessage(websocket.TextMessage, str); err != nil {
-			oldUser.Conn.Close()
-			delete(ClientList, user.Id)
-		}
-	}
-
-	ClientList[user.Id] = user
-
-	go WsServerBackend()
 
 	for {
 		//接受消息
 		messageType, receive, err := conn.ReadMessage()
-		fmt.Println("---------------------------------------------")
-		fmt.Println(messageType)
-		testMsg := &msgpb.Msg{}
-		proto.Unmarshal(receive, testMsg)
-		fmt.Println("*********************************************")
-
-		if err != nil {
-			for _, visitor := range ClientList {
-				if visitor.Conn == conn {
-					log.Println("删除用户", visitor.Id)
-					delete(ClientList, visitor.Id)
-					//VisitorOffline(visitor.To_id, visitor.Id, visitor.Name)
-				}
-			}
-			log.Println(err)
-			return
+		if messageType < 0 {
+			break
 		}
 
-		message <- &Message{
-			conn:        conn,
-			content:     receive,
-			context:     c,
-			messageType: messageType,
-		}
-	}
-
-}
-
-type Message struct {
-	conn        *websocket.Conn
-	context     *gin.Context
-	content     []byte
-	messageType int
-	Mux         sync.Mutex
-}
-
-var message = make(chan *Message, 10)
-
-func WsServerBackend() {
-	for {
-		message := <-message
-		var typeMsg TypeMessage
-		json.Unmarshal(message.content, &typeMsg)
-
-		typeMsg.Type = "inputing"
-
-		conn := message.conn
-		conn.WriteMessage(websocket.TextMessage, []byte("12323"))
-
-		if typeMsg.Type == nil || typeMsg.Data == nil {
+		if messageType != websocket.BinaryMessage {
 			continue
 		}
-		msgType := typeMsg.Type.(string)
-		log.Println("客户端:", string(message.content))
-
-		switch msgType {
-		//心跳
-		case "ping":
-			msg := TypeMessage{
-				Type: "pong",
-			}
-			str, _ := json.Marshal(msg)
-			message.Mux.Lock()
-			defer message.Mux.Unlock()
-			conn.WriteMessage(websocket.TextMessage, str)
-		case "inputing":
-			data := typeMsg.Data.(map[string]interface{})
-			//from := data["from"].(string)
-			to := data["to"].(string)
-			fmt.Printf("%+v\n", to)
-
+		if err != nil {
+			zap.S().Errorf("读取消息失败:%s",err.Error())
+			continue
 		}
+
+		msg := &msgpb.Msg{}
+		err = proto.Unmarshal(receive,msg)
+		if err != nil {
+			zap.S().Errorf("解析消息失败:%s",err.Error())
+			continue
+		}
+		handleFunc,ok := global.SocketRouter[msg.GetPath()]
+		if !ok {
+			zap.S().Error("消息路由不存在")
+			continue
+		}
+		err = handleFunc(conn,msg)
+		if err != nil {
+			break
+		}
+
+		fmt.Printf("%#v\n",UserClientConn)
 
 	}
 
 }
+
+func Test1(c *gin.Context) {
+	go func() {
+		ln, err := net.Listen("tcp", "0.0.0.0:9003")
+		if err != nil {
+			panic(err)
+		}
+
+		// Prepare handshake header writer from http.Header mapping.
+		header := ws.HandshakeHeaderHTTP(http.Header{
+			"X-Go-Version": []string{runtime.Version()},
+		})
+
+		u := ws.Upgrader{
+			OnHost: func(host []byte) error {
+				//if string(host) == "github.com" {
+				//	return nil
+				//}
+				//return ws.RejectConnectionError(
+				//	ws.RejectionStatus(403),
+				//	ws.RejectionHeader(ws.HandshakeHeaderString(
+				//		"X-Want-Host: github.com\r\n",
+				//	)),
+				//)
+				return nil
+			},
+			OnHeader: func(key, value []byte) error {
+				if string(key) != "Cookie" {
+					return nil
+				}
+				ok := httphead.ScanCookie(value, func(key, value []byte) bool {
+					// Check session here or do some other stuff with cookies.
+					// Maybe copy some values for future use.
+					return true
+				})
+				if ok {
+					return nil
+				}
+				return ws.RejectConnectionError(
+					ws.RejectionReason("bad cookie"),
+					ws.RejectionStatus(400),
+				)
+			},
+			OnBeforeUpgrade: func() (ws.HandshakeHeader, error) {
+				return header, nil
+			},
+		}
+		for {
+			conn, err := ln.Accept()
+			if err != nil {
+				log.Fatal(err)
+			}
+			_, err = u.Upgrade(conn)
+			if err != nil {
+				log.Printf("upgrade error: %s", err)
+			}
+			var (
+				state  = ws.StateServerSide
+				reader = wsutil.NewReader(conn, state)
+				writer = wsutil.NewWriter(conn, state, ws.OpText)
+			)
+			go func() {
+				for {
+					header, err := reader.NextFrame()
+					//if header.OpCode == ws.OpClose {
+					//	fmt.Println(err)
+					//
+					//	return
+					//}
+					if err != nil {
+						fmt.Println(err)
+						conn.Close()
+						break
+					}
+
+					// Reset writer to write frame with right operation code.
+					writer.Reset(conn, state, header.OpCode)
+					//err = ws.RejectConnectionError(
+					//	ws.RejectionReason("bad cookie"),
+					//	ws.RejectionStatus(400),
+					//)
+					//conn.
+					fmt.Println(err)
+					conn.Close()
+
+					if _, err = io.Copy(writer, reader); err != nil {
+						// handle error
+					}
+					if err = writer.Flush(); err != nil {
+						// handle error
+					}
+				}
+			}()
+		}
+	}()
+}
+
+

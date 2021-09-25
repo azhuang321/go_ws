@@ -12,5 +12,6 @@ func InitWsRouter(Router *gin.RouterGroup) {
 	UserRouterGroup := Router.Group("ws")
 	{
 		UserRouterGroup.GET("test", api.Test)
+		UserRouterGroup.GET("test1", api.Test1)
 	}
 }

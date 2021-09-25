@@ -42,7 +42,6 @@ function WebsocketHeartbeatJs({
 }
 WebsocketHeartbeatJs.prototype.createWebSocket = function(){
     try {
-        // this.ws = new WebSocket(this.opts.url,["protocol1","protocol2"] );
         this.ws = new WebSocket(this.opts.url);
         this.initEventHandle();
     } catch (e) {
@@ -79,6 +78,7 @@ WebsocketHeartbeatJs.prototype.initEventHandle = function(){
 };
 
 WebsocketHeartbeatJs.prototype.reconnect = function(){
+    return
     if(this.opts.repeatLimit>0 && this.opts.repeatLimit <= this.repeat) return;//limit repeat the number
     if(this.lockReconnect || this.forbidReconnect) return;
     this.lockReconnect = true;
@@ -99,6 +99,7 @@ WebsocketHeartbeatJs.prototype.heartCheck = function(){
     this.heartStart();
 };
 WebsocketHeartbeatJs.prototype.heartStart = function(){
+    return
     if(this.forbidReconnect) return;//不再重连就不再执行心跳
     this.pingTimeoutId = setTimeout(() => {
         //这里发送一个心跳，后端收到后，返回一个心跳消息，
