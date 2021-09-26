@@ -45,7 +45,7 @@
         let pingBinary = pingMsgObj.serializeBinary()
 
 
-        const url = 'ws://wslhost:9002/v1/ws/test'
+        const url = 'ws://wslhost:9002/v1/ws/test?token=' + loginUserInfo.token;
         // const url = 'ws://wslhost:9003'
         let firstHeartbeat = true;
         let websocketHeartbeatJs = new WebsocketHeartbeatJs({
@@ -132,8 +132,8 @@
             , init: {
                 //我的信息
                 mine: {
-                    "username": "测试2" //我的昵称
-                    , "id": 2 //我的ID
+                    "username": "测试1" //我的昵称
+                    , "id": 1 //我的ID
                     , "avatar": "http://tvax1.sinaimg.cn/crop.0.0.300.300.180/006Iv8Wjly8ff7ghbigcij308c08ct8i.jpg" //我的头像
                     , "sign": "测试内容"
                 }
@@ -142,13 +142,13 @@
                     "groupname": "测试分组一"
                     , "id": 0
                     , "list": [{
-                        "username": "测试1"
-                        , "id": "1"
+                        "username": "测试2"
+                        , "id": "2"
                         , "avatar": "./src/layim-assets/images/default.png"
                         , "sign": "测试内容1"
                         , "status": "online"
-                    }]
-                }, {
+                    }
+                    ]}, {
                     "groupname": "测试分组二"
                     , "id": 1
                     , "list": [{
@@ -297,9 +297,6 @@
 
         //触发发送消息
         layim.on('sendMessage', function (data) {
-            // var To = data.to;
-            // console.log(JSON.stringify(data));
-
             let mine = new proto.Msg.Mine()
             mine.setUsername(data.mine.username)
             mine.setAvatar(data.mine.avatar)
@@ -316,24 +313,29 @@
             to.setContent(data.to.content)
             to.setTimestamp(data.to.timestamp)
             to.setName(data.to.name)
-            to.setHistorytime(data.to.historyTime)
+            to.setHistoryTime(data.to.historyTime)
             to.setSign(data.to.sign)
 
-            let sendMsgObj = new proto.Msg.SendMsg()
-            sendMsgObj.setMine(mine)
-            sendMsgObj.setTo(to)
+            let msg = new proto.Msg.Msg()
+            msg.setPath('/chat')
+            msg.setMsgType(proto.Msg.MsgType.TEXT)
 
-            let sendMsgObjBinary = sendMsgObj.serializeBinary()
-            websocketHeartbeatJs.send(sendMsgObjBinary);
-            websocketHeartbeatJs.send(JSON.stringify(data));
+            let content = new proto.Msg.Content()
+            content.setMine(mine)
+            content.setTo(to)
+
+            msg.setContent(content)
+
+            let sendMsgBinary = msg.serializeBinary()
+            websocketHeartbeatJs.send(sendMsgBinary);
         });
 
         //模拟收到一条好友消息
         // setTimeout(function () {
         //     layim.getMessage({
-        //         username: "测试1"
+        //         username: "测试2"
         //         , avatar: ""
-        //         , id: "1"
+        //         , id: "2"
         //         , type: "friend"
         //         , cid: Math.random() * 100000 | 0 //模拟消息id，会赋值在li的data-cid上，以便完成一些消息的操作（如撤回），可不填
         //         , content: "嗨，欢迎体验LayIM。演示标记：" + new Date().getTime()
@@ -341,16 +343,16 @@
         // }, 1500);
 
         //触发查看更多记录
-        layim.on('chatlog', function (data, ul) {
-            console.log(data);
-            layim.panel({
-                title: '与 ' + data.name + ' 的聊天记录' //标题
-                , tpl: '<div style="padding: 10px;">这里是模版，{{d.data.test}}</div>' //模版
-                , data: { //数据
-                    test: 'Hello'
-                }
-            });
-        });
+        // layim.on('chatlog', function (data, ul) {
+        //     console.log(data);
+        //     layim.panel({
+        //         title: '与 ' + data.name + ' 的聊天记录' //标题
+        //         , tpl: '<div style="padding: 10px;">这里是模版，{{d.data.test}}</div>' //模版
+        //         , data: { //数据
+        //             test: 'Hello'
+        //         }
+        //     });
+        // });
 
         //模拟"更多"有新动态
         layim.showNew('More', true);
