@@ -3,6 +3,8 @@ package api
 import (
 	"fmt"
 	"github.com/gin-gonic/gin"
+	"github.com/gobwas/httphead"
+	"github.com/gobwas/ws"
 	"github.com/gobwas/ws/wsutil"
 	"github.com/gorilla/websocket"
 	"go.uber.org/zap"
@@ -13,12 +15,9 @@ import (
 	"net/http"
 	"runtime"
 	"ws_srv/global"
-	"ws_srv/utils"
 	"ws_srv/proto/gen/go/msgpb"
-	"github.com/gobwas/httphead"
-	"github.com/gobwas/ws"
+	"ws_srv/utils"
 )
-
 var upGrader = websocket.Upgrader{
 	ReadBufferSize:  1024,
 	WriteBufferSize: 1024,
@@ -34,7 +33,23 @@ type UserConn struct{
 
 var UserClientConn = make(map[uint32]*UserConn)
 
+var test = 0
+
 func Test(c *gin.Context) {
+	defer func() {
+		fmt.Println("协程关闭....")
+	}()
+
+	if test == 0 {
+		//go func() {
+		//	for {
+		//		fmt.Println(runtime.NumGoroutine(),test)
+		//		time.Sleep(time.Second * 3)
+		//	}
+		//}()
+	}
+
+	test++
 	conn, err := upGrader.Upgrade(c.Writer, c.Request, nil)
 	if err != nil {
 		zap.S().Errorf("初始websocket失败:%s", err.Error())
@@ -172,6 +187,10 @@ func Test1(c *gin.Context) {
 			}()
 		}
 	}()
+}
+
+func Test2(ctx *gin.Context)  {
+
 }
 
 

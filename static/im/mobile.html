@@ -45,7 +45,7 @@
         let pingBinary = pingMsgObj.serializeBinary()
 
 
-        const url = 'ws://wslhost:9002/v1/ws/test'
+        const url = 'ws://wslhost:9002/v1/ws/test?token=' + loginUserInfo.token;
         // const url = 'ws://wslhost:9003'
         let firstHeartbeat = true;
         let websocketHeartbeatJs = new WebsocketHeartbeatJs({
@@ -297,9 +297,6 @@
 
         //触发发送消息
         layim.on('sendMessage', function (data) {
-            console.dir((data));
-            console.dir(JSON.stringify(data));
-
             let mine = new proto.Msg.Mine()
             mine.setUsername(data.mine.username)
             mine.setAvatar(data.mine.avatar)
@@ -319,18 +316,18 @@
             to.setHistoryTime(data.to.historyTime)
             to.setSign(data.to.sign)
 
-            console.dir(data.to.content)
-            console.dir(data.to.historyTime)
-            console.dir(data.to.sign)
-            console.dir('--------------------------------------------------------------------------')
+            let msg = new proto.Msg.Msg()
+            msg.setPath('/chat')
+            msg.setMsgType(proto.Msg.MsgType.TEXT)
 
-            let sendMsgObj = new proto.Msg.SendMsg()
-            sendMsgObj.setMine(mine)
-            sendMsgObj.setTo(to)
+            let content = new proto.Msg.Content()
+            content.setMine(mine)
+            content.setTo(to)
 
-            let sendMsgObjBinary = sendMsgObj.serializeBinary()
-            websocketHeartbeatJs.send(sendMsgObjBinary);
-            websocketHeartbeatJs.send(JSON.stringify(data));
+            msg.setContent(content)
+
+            let sendMsgBinary = msg.serializeBinary()
+            websocketHeartbeatJs.send(sendMsgBinary);
         });
 
         //模拟收到一条好友消息
