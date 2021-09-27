@@ -40,9 +40,9 @@
 
 
         //设置心跳信息
-        let pingMsgObj = new proto.Msg.HeartMsg()
-        pingMsgObj.setPing("ping")
-        let pingBinary = pingMsgObj.serializeBinary()
+        // let pingMsgObj = new proto.Msg.HeartMsg()
+        // pingMsgObj.setPing("ping")
+        // let pingBinary = pingMsgObj.serializeBinary()
 
 
         const url = 'ws://wslhost:9002/v1/ws/test?token=' + loginUserInfo.token;
@@ -52,7 +52,8 @@
             url: url,
             pingTimeout: 8000,
             pongTimeout: 8000,
-            pingMsg: pingBinary
+            // pingMsg: pingBinary
+            pingMsg: "ping"
         });
 
         let myChat = new Chat({
@@ -72,12 +73,29 @@
         websocketHeartbeatJs.onmessage = function (e) {
             console.dir(`onmessage: ${e.data}`);
 
-            if (e.data == websocketHeartbeatJs.opts.pingMsg && firstHeartbeat) {
-                setTimeout(() => {
-                    console.dir(`Close your network, wait ${websocketHeartbeatJs.opts.pingTimeout + websocketHeartbeatJs.opts.pongTimeout}+ ms, websocket will reconnect`, 'cadetblue');
-                }, 1500);
-                firstHeartbeat = false;
-            }
+            let receiveMsg = proto.Msg.Msg.deserializeBinary(e.data)
+            let friendMsg = receiveMsg.getContent().getMine()
+
+
+            layim.getMessage({
+                username: friendMsg.getUsername()
+                , avatar: friendMsg.getAvatar()
+                , id: friendMsg.getId()
+                , type: "friend"
+                , cid: 0 //模拟消息id，会赋值在li的data-cid上，以便完成一些消息的操作（如撤回），可不填
+                , content: friendMsg.getContent()
+            });
+
+
+
+
+
+            // if (e.data == websocketHeartbeatJs.opts.pingMsg && firstHeartbeat) {
+            //     setTimeout(() => {
+            //         console.dir(`Close your network, wait ${websocketHeartbeatJs.opts.pingTimeout + websocketHeartbeatJs.opts.pongTimeout}+ ms, websocket will reconnect`, 'cadetblue');
+            //     }, 1500);
+            //     firstHeartbeat = false;
+            // }
         }
         websocketHeartbeatJs.onreconnect = function () {
             console.log(`断线,正在重连中...`);
@@ -296,33 +314,78 @@
         });
 
         //触发发送消息
+        // layim.on('sendMessage', function (data) {
+        //     // console.dir(data)
+        //     let msg = new proto.Msg.Msg()
+        //     msg.setPath('/chat')
+        //     msg.setMsgType(proto.Msg.MsgType.TEXT)
+        //
+        //     let sendUserInfo = new proto.Msg.UserInfo()
+        //
+        //     sendUserInfo.setId(data.mine.id)
+        //     sendUserInfo.setAvatar(data.mine.avatar)
+        //     sendUserInfo.setUsername(data.mine.username)
+        //
+        //     let sendInfo = new proto.Msg.SendInfo()
+        //     sendInfo.setSendUserInfo(sendUserInfo)
+        //
+        //     let receiveUserInfo = new proto.Msg.UserInfo()
+        //     receiveUserInfo.setId(data.to.id)
+        //     receiveUserInfo.setAvatar(data.to.avatar)
+        //     receiveUserInfo.setUsername(data.to.username)
+        //
+        //     let receiveInfo = new proto.Msg.ReceiveInfo()
+        //     receiveInfo.setReceiveUserInfo(receiveUserInfo)
+        //     receiveInfo.setType(data.to.type)
+        //     receiveInfo.setCid(data.to.cid)
+        //     receiveInfo.setContent(data.to.content)
+        //     receiveInfo.setTimestamp(data.to.timestamp)
+        //     receiveInfo.setName(data.to.name)
+        //     receiveInfo.setHistoryTime(data.to.historyTime)
+        //     receiveInfo.setSign(data.to.sign)
+        //
+        //     let content = new proto.Msg.Content()
+        //     content.setSendInfo(sendInfo)
+        //     content.setReceiveInfo(receiveInfo)
+        //
+        //     let sendMsgBinary = msg.serializeBinary()
+        //     websocketHeartbeatJs.send(sendMsgBinary);
+        // });
+
+
         layim.on('sendMessage', function (data) {
-            let mine = new proto.Msg.Mine()
-            mine.setUsername(data.mine.username)
-            mine.setAvatar(data.mine.avatar)
-            mine.setId(data.mine.id)
-            mine.setMine(data.mine.mine)
-            mine.setContent(data.mine.content)
-
-            let to = new proto.Msg.To()
-            to.setUsername(data.to.username)
-            to.setAvatar(data.to.avatar)
-            to.setId(data.to.id)
-            to.setType(data.to.type)
-            to.setCid(data.to.cid)
-            to.setContent(data.to.content)
-            to.setTimestamp(data.to.timestamp)
-            to.setName(data.to.name)
-            to.setHistoryTime(data.to.historyTime)
-            to.setSign(data.to.sign)
-
+            // console.dir(data)
             let msg = new proto.Msg.Msg()
             msg.setPath('/chat')
             msg.setMsgType(proto.Msg.MsgType.TEXT)
 
+            let sendUserInfo = new proto.Msg.UserInfo()
+            sendUserInfo.setId(data.mine.id)
+            sendUserInfo.setAvatar(data.mine.avatar)
+            sendUserInfo.setUsername(data.mine.username)
+            console.dir(sendUserInfo)
+
+            let sendInfo = new proto.Msg.SendInfo()
+            sendInfo.setSendUserInfo(sendUserInfo)
+
+            let receiveUserInfo = new proto.Msg.UserInfo()
+            receiveUserInfo.setId(data.to.id)
+            receiveUserInfo.setAvatar(data.to.avatar)
+            receiveUserInfo.setUsername(data.to.username)
+
+            let receiveInfo = new proto.Msg.ReceiveInfo()
+            receiveInfo.setReceiveUserInfo(receiveUserInfo)
+            receiveInfo.setType(data.to.type)
+            receiveInfo.setCid(data.to.cid)
+            receiveInfo.setContent(data.to.content)
+            receiveInfo.setTimestamp(data.to.timestamp)
+            receiveInfo.setName(data.to.name)
+            receiveInfo.setHistoryTime(data.to.historyTime)
+            receiveInfo.setSign(data.to.sign)
+
             let content = new proto.Msg.Content()
-            content.setMine(mine)
-            content.setTo(to)
+            content.setSendInfo(sendInfo)
+            content.setReceiveInfo(receiveInfo)
 
             msg.setContent(content)
 
@@ -330,17 +393,6 @@
             websocketHeartbeatJs.send(sendMsgBinary);
         });
 
-        //模拟收到一条好友消息
-        // setTimeout(function () {
-        //     layim.getMessage({
-        //         username: "测试2"
-        //         , avatar: ""
-        //         , id: "2"
-        //         , type: "friend"
-        //         , cid: Math.random() * 100000 | 0 //模拟消息id，会赋值在li的data-cid上，以便完成一些消息的操作（如撤回），可不填
-        //         , content: "嗨，欢迎体验LayIM。演示标记：" + new Date().getTime()
-        //     });
-        // }, 1500);
 
         //触发查看更多记录
         // layim.on('chatlog', function (data, ul) {

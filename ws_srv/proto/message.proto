@@ -2,7 +2,15 @@ syntax = "proto3";
 package Msg;
 option go_package = "proto/gen/go/msgpb;msgpb";
 
-
+message Msg {
+    string path = 1;
+    MsgType msg_type = 2;
+    oneof payload {
+        string token = 3;
+        string heart_check = 4;
+        Content content = 5;
+    }
+}
 
 enum MsgType {
     PING = 0;
@@ -10,61 +18,39 @@ enum MsgType {
     TEXT = 2;
 }
 
+enum ChatType{
+    FRIEND = 0;
+    GROUP = 1;
+    SYSTEM = 2;
+}
+
 message Content {
-    Mine mine = 1;
-    To to = 2;
+    SendInfo send_info = 1;
+    ReceiveInfo receive_info = 2;
 }
 
-message Msg {
-    MsgType msg_type = 1;
-    string path = 2;
-    oneof payload {
-        string token = 3;
-        Content content = 4;
-    }
-
-}
-
-
-
-
-
-
-
-
-
-
-
-
-message SendMsg {
-    Mine mine = 1;
-    To to = 2;
-}
-
-
-message HeartMsg {
-    string ping = 1;
-}
-
-//自身消息
-message Mine {
-    string username = 1;
+message UserInfo{
+    uint32 id = 1;
     string avatar = 2;
-    uint32 id = 3;
-    bool mine = 4;
-    string content = 5;
+    string username = 3;
 }
-message To {
-    string username = 1;
-    string avatar = 2;
-    uint32 id = 3;
-    string type = 4;
-    uint32 cid = 5;
-    string content = 6;
-    uint32 timestamp = 7;
-    string name = 8;
-    uint64 history_time = 9;
-    string sign = 10;
+
+//发送者
+message SendInfo {
+    UserInfo send_user_info = 1;
+    bool mine = 2;
+}
+
+//接受者
+message ReceiveInfo {
+    UserInfo receive_user_info = 1;
+    string content = 2;
+    string type = 3;
+    uint32 cid = 4;
+    uint64 timestamp = 5;
+    string name = 6;
+    uint64 history_time = 7;
+    string sign = 8;
 }
 
 

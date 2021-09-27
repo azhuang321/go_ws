@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/gorilla/websocket"
 	"go.uber.org/zap"
+	"google.golang.org/protobuf/proto"
 	"ws_srv/api"
 	"ws_srv/proto/gen/go/msgpb"
 	"ws_srv/utils"
@@ -30,12 +31,19 @@ func Auth(conn *websocket.Conn,msg *msgpb.Msg) error {
 }
 
 func Chat(conn *websocket.Conn,msg *msgpb.Msg) error {
-	toUserId := msg.GetContent().GetTo().Id
-	fmt.Println(toUserId)
+	fmt.Printf("%#v\n",msg.GetContent().GetSendInfo().GetSendUserInfo())
+	toUserId := msg.GetContent().GetReceiveInfo().GetReceiveUserInfo().GetId()
 	toUserConn := api.UserClientConn[toUserId]
-	fmt.Println(toUserConn)
 
-	err := toUserConn.UserConn.WriteMessage(websocket.BinaryMessage,[]byte("123"))
+	binary,err := proto.Marshal(msg)
+	if err != nil {
+		zap.S().Errorf("序列化失败:%s",err.Error())
+		return err
+	}
+
+	//todo 判断,修改为sync,map
+
+	err = toUserConn.UserConn.WriteMessage(websocket.BinaryMessage,binary)
 	if err != nil {
 		zap.S().Errorf("发送消息失败:%s",err.Error())
 	}

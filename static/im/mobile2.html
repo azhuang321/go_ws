@@ -72,12 +72,29 @@
         websocketHeartbeatJs.onmessage = function (e) {
             console.dir(`onmessage: ${e.data}`);
 
-            if (e.data == websocketHeartbeatJs.opts.pingMsg && firstHeartbeat) {
-                setTimeout(() => {
-                    console.dir(`Close your network, wait ${websocketHeartbeatJs.opts.pingTimeout + websocketHeartbeatJs.opts.pongTimeout}+ ms, websocket will reconnect`, 'cadetblue');
-                }, 1500);
-                firstHeartbeat = false;
-            }
+            let receiveMsg = proto.Msg.Msg.deserializeBinary(e.data)
+            let friendMsg = receiveMsg.getContent().getMine()
+
+
+            layim.getMessage({
+                username: friendMsg.getUsername()
+                , avatar: friendMsg.getAvatar()
+                , id: friendMsg.getId()
+                , type: "friend"
+                , cid: 0 //模拟消息id，会赋值在li的data-cid上，以便完成一些消息的操作（如撤回），可不填
+                , content: friendMsg.getContent()
+            });
+
+
+
+
+
+            // if (e.data == websocketHeartbeatJs.opts.pingMsg && firstHeartbeat) {
+            //     setTimeout(() => {
+            //         console.dir(`Close your network, wait ${websocketHeartbeatJs.opts.pingTimeout + websocketHeartbeatJs.opts.pongTimeout}+ ms, websocket will reconnect`, 'cadetblue');
+            //     }, 1500);
+            //     firstHeartbeat = false;
+            // }
         }
         websocketHeartbeatJs.onreconnect = function () {
             console.log(`断线,正在重连中...`);
