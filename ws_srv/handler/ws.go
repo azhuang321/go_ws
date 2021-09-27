@@ -31,9 +31,17 @@ func Auth(conn *websocket.Conn,msg *msgpb.Msg) error {
 }
 
 func Chat(conn *websocket.Conn,msg *msgpb.Msg) error {
-	fmt.Printf("%#v\n",msg.GetContent().GetSendInfo().GetSendUserInfo())
+	fmt.Printf("%#v\n",msg.GetContent().GetReceiveInfo())
 	toUserId := msg.GetContent().GetReceiveInfo().GetReceiveUserInfo().GetId()
-	toUserConn := api.UserClientConn[toUserId]
+	zap.S().Infof("接受者id:%d",toUserId)
+	toUserConn,ok := api.UserClientConn[toUserId]
+	if !ok {
+		zap.S().Errorf("收消息者不在线: %d", toUserId)
+		return nil
+	}
+
+	fmt.Println("消息",msg.GetContent().GetReceiveInfo().GetContent())
+
 
 	binary,err := proto.Marshal(msg)
 	if err != nil {

@@ -25,9 +25,21 @@
         , 'upload-mobile': 'upload-mobile'
         , 'layim-mobile': 'layim-mobile'
     }).use('layim-mobile', function () {
+        let login_username = sessionStorage.getItem('login_username');
         var localTest = layui.data("jwt");
-        let loginUserInfo = localTest['13774246150']
+        let loginUserInfo = localTest[login_username]
         console.log(loginUserInfo);
+
+
+
+        // 从 sessionStorage 获取数据
+        // let data = sessionStorage.getItem('login_username');
+
+        // 从 sessionStorage 删除保存的数据
+        // sessionStorage.removeItem('key');
+
+        // 从 sessionStorage 删除所有保存的数据
+        // sessionStorage.clear();
 
 
         // let testMsg = new proto.Msg.Msg();
@@ -71,19 +83,19 @@
             }, 1500);
         }
         websocketHeartbeatJs.onmessage = function (e) {
-            console.dir(`onmessage: ${e.data}`);
-
             let receiveMsg = proto.Msg.Msg.deserializeBinary(e.data)
-            let friendMsg = receiveMsg.getContent().getMine()
+            console.dir(receiveMsg);
+
+            let receiveMsgInfo = receiveMsg.getContent().getReceiveInfo()
 
 
             layim.getMessage({
-                username: friendMsg.getUsername()
-                , avatar: friendMsg.getAvatar()
-                , id: friendMsg.getId()
+                username: receiveMsgInfo.getReceiveUserInfo().getUsername()
+                , avatar: receiveMsgInfo.getReceiveUserInfo().getAvatar()
+                , id: receiveMsgInfo.getReceiveUserInfo().getId()
                 , type: "friend"
                 , cid: 0 //模拟消息id，会赋值在li的data-cid上，以便完成一些消息的操作（如撤回），可不填
-                , content: friendMsg.getContent()
+                , content: receiveMsgInfo.getContent()
             });
 
 
@@ -314,47 +326,8 @@
         });
 
         //触发发送消息
-        // layim.on('sendMessage', function (data) {
-        //     // console.dir(data)
-        //     let msg = new proto.Msg.Msg()
-        //     msg.setPath('/chat')
-        //     msg.setMsgType(proto.Msg.MsgType.TEXT)
-        //
-        //     let sendUserInfo = new proto.Msg.UserInfo()
-        //
-        //     sendUserInfo.setId(data.mine.id)
-        //     sendUserInfo.setAvatar(data.mine.avatar)
-        //     sendUserInfo.setUsername(data.mine.username)
-        //
-        //     let sendInfo = new proto.Msg.SendInfo()
-        //     sendInfo.setSendUserInfo(sendUserInfo)
-        //
-        //     let receiveUserInfo = new proto.Msg.UserInfo()
-        //     receiveUserInfo.setId(data.to.id)
-        //     receiveUserInfo.setAvatar(data.to.avatar)
-        //     receiveUserInfo.setUsername(data.to.username)
-        //
-        //     let receiveInfo = new proto.Msg.ReceiveInfo()
-        //     receiveInfo.setReceiveUserInfo(receiveUserInfo)
-        //     receiveInfo.setType(data.to.type)
-        //     receiveInfo.setCid(data.to.cid)
-        //     receiveInfo.setContent(data.to.content)
-        //     receiveInfo.setTimestamp(data.to.timestamp)
-        //     receiveInfo.setName(data.to.name)
-        //     receiveInfo.setHistoryTime(data.to.historyTime)
-        //     receiveInfo.setSign(data.to.sign)
-        //
-        //     let content = new proto.Msg.Content()
-        //     content.setSendInfo(sendInfo)
-        //     content.setReceiveInfo(receiveInfo)
-        //
-        //     let sendMsgBinary = msg.serializeBinary()
-        //     websocketHeartbeatJs.send(sendMsgBinary);
-        // });
-
-
         layim.on('sendMessage', function (data) {
-            // console.dir(data)
+            console.dir(data)
             let msg = new proto.Msg.Msg()
             msg.setPath('/chat')
             msg.setMsgType(proto.Msg.MsgType.TEXT)
@@ -363,7 +336,6 @@
             sendUserInfo.setId(data.mine.id)
             sendUserInfo.setAvatar(data.mine.avatar)
             sendUserInfo.setUsername(data.mine.username)
-            console.dir(sendUserInfo)
 
             let sendInfo = new proto.Msg.SendInfo()
             sendInfo.setSendUserInfo(sendUserInfo)
@@ -377,22 +349,20 @@
             receiveInfo.setReceiveUserInfo(receiveUserInfo)
             receiveInfo.setType(data.to.type)
             receiveInfo.setCid(data.to.cid)
-            receiveInfo.setContent(data.to.content)
-            receiveInfo.setTimestamp(data.to.timestamp)
-            receiveInfo.setName(data.to.name)
-            receiveInfo.setHistoryTime(data.to.historyTime)
-            receiveInfo.setSign(data.to.sign)
+            receiveInfo.setContent(data.mine.content)
+
+            console.dir(data.to)
+            console.dir("content",data.to.content)
+            console.dir(receiveInfo.getContent())
 
             let content = new proto.Msg.Content()
             content.setSendInfo(sendInfo)
             content.setReceiveInfo(receiveInfo)
 
             msg.setContent(content)
-
             let sendMsgBinary = msg.serializeBinary()
             websocketHeartbeatJs.send(sendMsgBinary);
         });
-
 
         //触发查看更多记录
         // layim.on('chatlog', function (data, ul) {

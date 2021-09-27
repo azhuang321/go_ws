@@ -44,13 +44,12 @@ message SendInfo {
 //接受者
 message ReceiveInfo {
     UserInfo receive_user_info = 1;
-    string content = 2;
-    string type = 3;
+    string type = 2;
+    string content = 3;
     uint32 cid = 4;
-    uint64 timestamp = 5;
-    string name = 6;
-    uint64 history_time = 7;
-    string sign = 8;
+    bool mine = 5;
+    uint32 from_id = 6;
+    uint64 timestamp = 7;
 }
 
 

@@ -1068,13 +1068,12 @@ proto.Msg.ReceiveInfo.prototype.toObject = function(opt_includeInstance) {
 proto.Msg.ReceiveInfo.toObject = function(includeInstance, msg) {
   var f, obj = {
     receiveUserInfo: (f = msg.getReceiveUserInfo()) && proto.Msg.UserInfo.toObject(includeInstance, f),
-    content: jspb.Message.getFieldWithDefault(msg, 2, ""),
-    type: jspb.Message.getFieldWithDefault(msg, 3, ""),
+    type: jspb.Message.getFieldWithDefault(msg, 2, ""),
+    content: jspb.Message.getFieldWithDefault(msg, 3, ""),
     cid: jspb.Message.getFieldWithDefault(msg, 4, 0),
-    timestamp: jspb.Message.getFieldWithDefault(msg, 5, 0),
-    name: jspb.Message.getFieldWithDefault(msg, 6, ""),
-    historyTime: jspb.Message.getFieldWithDefault(msg, 7, 0),
-    sign: jspb.Message.getFieldWithDefault(msg, 8, "")
+    mine: jspb.Message.getBooleanFieldWithDefault(msg, 5, false),
+    fromId: jspb.Message.getFieldWithDefault(msg, 6, 0),
+    timestamp: jspb.Message.getFieldWithDefault(msg, 7, 0)
   };
 
   if (includeInstance) {
@@ -1118,31 +1117,27 @@ proto.Msg.ReceiveInfo.deserializeBinaryFromReader = function(msg, reader) {
       break;
     case 2:
       var value = /** @type {string} */ (reader.readString());
-      msg.setContent(value);
+      msg.setType(value);
       break;
     case 3:
       var value = /** @type {string} */ (reader.readString());
-      msg.setType(value);
+      msg.setContent(value);
       break;
     case 4:
       var value = /** @type {number} */ (reader.readUint32());
       msg.setCid(value);
       break;
     case 5:
-      var value = /** @type {number} */ (reader.readUint64());
-      msg.setTimestamp(value);
+      var value = /** @type {boolean} */ (reader.readBool());
+      msg.setMine(value);
       break;
     case 6:
-      var value = /** @type {string} */ (reader.readString());
-      msg.setName(value);
+      var value = /** @type {number} */ (reader.readUint32());
+      msg.setFromId(value);
       break;
     case 7:
       var value = /** @type {number} */ (reader.readUint64());
-      msg.setHistoryTime(value);
-      break;
-    case 8:
-      var value = /** @type {string} */ (reader.readString());
-      msg.setSign(value);
+      msg.setTimestamp(value);
       break;
     default:
       reader.skipField();
@@ -1181,14 +1176,14 @@ proto.Msg.ReceiveInfo.serializeBinaryToWriter = function(message, writer) {
       proto.Msg.UserInfo.serializeBinaryToWriter
     );
   }
-  f = message.getContent();
+  f = message.getType();
   if (f.length > 0) {
     writer.writeString(
       2,
       f
     );
   }
-  f = message.getType();
+  f = message.getContent();
   if (f.length > 0) {
     writer.writeString(
       3,
@@ -1202,31 +1197,24 @@ proto.Msg.ReceiveInfo.serializeBinaryToWriter = function(message, writer) {
       f
     );
   }
-  f = message.getTimestamp();
-  if (f !== 0) {
-    writer.writeUint64(
+  f = message.getMine();
+  if (f) {
+    writer.writeBool(
       5,
       f
     );
   }
-  f = message.getName();
-  if (f.length > 0) {
-    writer.writeString(
+  f = message.getFromId();
+  if (f !== 0) {
+    writer.writeUint32(
       6,
       f
     );
   }
-  f = message.getHistoryTime();
+  f = message.getTimestamp();
   if (f !== 0) {
     writer.writeUint64(
       7,
-      f
-    );
-  }
-  f = message.getSign();
-  if (f.length > 0) {
-    writer.writeString(
-      8,
       f
     );
   }
@@ -1271,10 +1259,10 @@ proto.Msg.ReceiveInfo.prototype.hasReceiveUserInfo = function() {
 
 
 /**
- * optional string content = 2;
+ * optional string type = 2;
  * @return {string}
  */
-proto.Msg.ReceiveInfo.prototype.getContent = function() {
+proto.Msg.ReceiveInfo.prototype.getType = function() {
   return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 2, ""));
 };
 
@@ -1283,16 +1271,16 @@ proto.Msg.ReceiveInfo.prototype.getContent = function() {
  * @param {string} value
  * @return {!proto.Msg.ReceiveInfo} returns this
  */
-proto.Msg.ReceiveInfo.prototype.setContent = function(value) {
+proto.Msg.ReceiveInfo.prototype.setType = function(value) {
   return jspb.Message.setProto3StringField(this, 2, value);
 };
 
 
 /**
- * optional string type = 3;
+ * optional string content = 3;
  * @return {string}
  */
-proto.Msg.ReceiveInfo.prototype.getType = function() {
+proto.Msg.ReceiveInfo.prototype.getContent = function() {
   return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 3, ""));
 };
 
@@ -1301,7 +1289,7 @@ proto.Msg.ReceiveInfo.prototype.getType = function() {
  * @param {string} value
  * @return {!proto.Msg.ReceiveInfo} returns this
  */
-proto.Msg.ReceiveInfo.prototype.setType = function(value) {
+proto.Msg.ReceiveInfo.prototype.setContent = function(value) {
   return jspb.Message.setProto3StringField(this, 3, value);
 };
 
@@ -1325,11 +1313,29 @@ proto.Msg.ReceiveInfo.prototype.setCid = function(value) {
 
 
 /**
- * optional uint64 timestamp = 5;
+ * optional bool mine = 5;
+ * @return {boolean}
+ */
+proto.Msg.ReceiveInfo.prototype.getMine = function() {
+  return /** @type {boolean} */ (jspb.Message.getBooleanFieldWithDefault(this, 5, false));
+};
+
+
+/**
+ * @param {boolean} value
+ * @return {!proto.Msg.ReceiveInfo} returns this
+ */
+proto.Msg.ReceiveInfo.prototype.setMine = function(value) {
+  return jspb.Message.setProto3BooleanField(this, 5, value);
+};
+
+
+/**
+ * optional uint32 from_id = 6;
  * @return {number}
  */
-proto.Msg.ReceiveInfo.prototype.getTimestamp = function() {
-  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 5, 0));
+proto.Msg.ReceiveInfo.prototype.getFromId = function() {
+  return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 6, 0));
 };
 
 
@@ -1337,34 +1343,16 @@ proto.Msg.ReceiveInfo.prototype.getTimestamp = function() {
  * @param {number} value
  * @return {!proto.Msg.ReceiveInfo} returns this
  */
-proto.Msg.ReceiveInfo.prototype.setTimestamp = function(value) {
-  return jspb.Message.setProto3IntField(this, 5, value);
+proto.Msg.ReceiveInfo.prototype.setFromId = function(value) {
+  return jspb.Message.setProto3IntField(this, 6, value);
 };
 
 
 /**
- * optional string name = 6;
- * @return {string}
- */
-proto.Msg.ReceiveInfo.prototype.getName = function() {
-  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 6, ""));
-};
-
-
-/**
- * @param {string} value
- * @return {!proto.Msg.ReceiveInfo} returns this
- */
-proto.Msg.ReceiveInfo.prototype.setName = function(value) {
-  return jspb.Message.setProto3StringField(this, 6, value);
-};
-
-
-/**
- * optional uint64 history_time = 7;
+ * optional uint64 timestamp = 7;
  * @return {number}
  */
-proto.Msg.ReceiveInfo.prototype.getHistoryTime = function() {
+proto.Msg.ReceiveInfo.prototype.getTimestamp = function() {
   return /** @type {number} */ (jspb.Message.getFieldWithDefault(this, 7, 0));
 };
 
@@ -1373,26 +1361,8 @@ proto.Msg.ReceiveInfo.prototype.getHistoryTime = function() {
  * @param {number} value
  * @return {!proto.Msg.ReceiveInfo} returns this
  */
-proto.Msg.ReceiveInfo.prototype.setHistoryTime = function(value) {
+proto.Msg.ReceiveInfo.prototype.setTimestamp = function(value) {
   return jspb.Message.setProto3IntField(this, 7, value);
-};
-
-
-/**
- * optional string sign = 8;
- * @return {string}
- */
-proto.Msg.ReceiveInfo.prototype.getSign = function() {
-  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 8, ""));
-};
-
-
-/**
- * @param {string} value
- * @return {!proto.Msg.ReceiveInfo} returns this
- */
-proto.Msg.ReceiveInfo.prototype.setSign = function(value) {
-  return jspb.Message.setProto3StringField(this, 8, value);
 };
 
 
