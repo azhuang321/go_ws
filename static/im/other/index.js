@@ -1,17 +1,4 @@
-/**
- * `WebsocketHeartbeatJs` constructor.
- *
- * @param {Object} opts
- * {
- *  url                  websocket链接地址
- *  pingTimeout 未收到消息多少秒之后发送ping请求，默认15000毫秒
-    pongTimeout  发送ping之后，未收到消息超时时间，默认10000毫秒
-    reconnectTimeout
-    pingMsg
- * }
- * @api public
- */
-
+// webosocket 详解  https://github.com/Pines-Cheng/blog/issues/37
 function WebsocketHeartbeatJs({
     url, 
     pingTimeout = 15000,
@@ -55,11 +42,15 @@ WebsocketHeartbeatJs.prototype.setBinaryType = function(){
 };
 
 WebsocketHeartbeatJs.prototype.initEventHandle = function(){
-    this.ws.onclose = () => {
+    this.ws.onclose = (event) => {
+        console.dir(event)
+        var code = event.code;
+        var reason = event.reason;
+        var wasClean = event.wasClean;
         this.onclose();
         this.reconnect();
     };
-    this.ws.onerror = () => {
+    this.ws.onerror = (event) => {
         this.onerror();
         this.reconnect();
     };

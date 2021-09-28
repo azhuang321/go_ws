@@ -892,8 +892,7 @@ proto.Msg.SendInfo.prototype.toObject = function(opt_includeInstance) {
  */
 proto.Msg.SendInfo.toObject = function(includeInstance, msg) {
   var f, obj = {
-    sendUserInfo: (f = msg.getSendUserInfo()) && proto.Msg.UserInfo.toObject(includeInstance, f),
-    mine: jspb.Message.getBooleanFieldWithDefault(msg, 2, false)
+    sendUserInfo: (f = msg.getSendUserInfo()) && proto.Msg.UserInfo.toObject(includeInstance, f)
   };
 
   if (includeInstance) {
@@ -935,10 +934,6 @@ proto.Msg.SendInfo.deserializeBinaryFromReader = function(msg, reader) {
       reader.readMessage(value,proto.Msg.UserInfo.deserializeBinaryFromReader);
       msg.setSendUserInfo(value);
       break;
-    case 2:
-      var value = /** @type {boolean} */ (reader.readBool());
-      msg.setMine(value);
-      break;
     default:
       reader.skipField();
       break;
@@ -974,13 +969,6 @@ proto.Msg.SendInfo.serializeBinaryToWriter = function(message, writer) {
       1,
       f,
       proto.Msg.UserInfo.serializeBinaryToWriter
-    );
-  }
-  f = message.getMine();
-  if (f) {
-    writer.writeBool(
-      2,
-      f
     );
   }
 };
@@ -1023,24 +1011,6 @@ proto.Msg.SendInfo.prototype.hasSendUserInfo = function() {
 };
 
 
-/**
- * optional bool mine = 2;
- * @return {boolean}
- */
-proto.Msg.SendInfo.prototype.getMine = function() {
-  return /** @type {boolean} */ (jspb.Message.getBooleanFieldWithDefault(this, 2, false));
-};
-
-
-/**
- * @param {boolean} value
- * @return {!proto.Msg.SendInfo} returns this
- */
-proto.Msg.SendInfo.prototype.setMine = function(value) {
-  return jspb.Message.setProto3BooleanField(this, 2, value);
-};
-
-
 
 
 
@@ -1074,7 +1044,7 @@ proto.Msg.ReceiveInfo.prototype.toObject = function(opt_includeInstance) {
 proto.Msg.ReceiveInfo.toObject = function(includeInstance, msg) {
   var f, obj = {
     receiveUserInfo: (f = msg.getReceiveUserInfo()) && proto.Msg.UserInfo.toObject(includeInstance, f),
-    type: jspb.Message.getFieldWithDefault(msg, 2, ""),
+    type: jspb.Message.getFieldWithDefault(msg, 2, 0),
     content: jspb.Message.getFieldWithDefault(msg, 3, ""),
     cid: jspb.Message.getFieldWithDefault(msg, 4, 0),
     mine: jspb.Message.getBooleanFieldWithDefault(msg, 5, false),
@@ -1122,7 +1092,7 @@ proto.Msg.ReceiveInfo.deserializeBinaryFromReader = function(msg, reader) {
       msg.setReceiveUserInfo(value);
       break;
     case 2:
-      var value = /** @type {string} */ (reader.readString());
+      var value = /** @type {!proto.Msg.ChatType} */ (reader.readEnum());
       msg.setType(value);
       break;
     case 3:
@@ -1183,8 +1153,8 @@ proto.Msg.ReceiveInfo.serializeBinaryToWriter = function(message, writer) {
     );
   }
   f = message.getType();
-  if (f.length > 0) {
-    writer.writeString(
+  if (f !== 0.0) {
+    writer.writeEnum(
       2,
       f
     );
@@ -1265,20 +1235,20 @@ proto.Msg.ReceiveInfo.prototype.hasReceiveUserInfo = function() {
 
 
 /**
- * optional string type = 2;
- * @return {string}
+ * optional ChatType type = 2;
+ * @return {!proto.Msg.ChatType}
  */
 proto.Msg.ReceiveInfo.prototype.getType = function() {
-  return /** @type {string} */ (jspb.Message.getFieldWithDefault(this, 2, ""));
+  return /** @type {!proto.Msg.ChatType} */ (jspb.Message.getFieldWithDefault(this, 2, 0));
 };
 
 
 /**
- * @param {string} value
+ * @param {!proto.Msg.ChatType} value
  * @return {!proto.Msg.ReceiveInfo} returns this
  */
 proto.Msg.ReceiveInfo.prototype.setType = function(value) {
-  return jspb.Message.setProto3StringField(this, 2, value);
+  return jspb.Message.setProto3EnumField(this, 2, value);
 };
 
 

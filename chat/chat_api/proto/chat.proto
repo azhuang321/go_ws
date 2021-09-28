@@ -1,0 +1,27 @@
+syntax = "proto3";
+option go_package="proto/gen/chat_pb;chat_pb";
+
+import "google/protobuf/empty.proto";
+
+service Chat {
+    rpc AddFriend(AddFriendRequest) returns (google.protobuf.Empty);
+    rpc GetFriendList(GetFriendListRequest) returns (GetFriendListResponse);
+}
+
+message AddFriendRequest {
+    uint32 user_id = 1;
+    uint32 friend_id = 2;
+    uint32 group_id = 3;
+}
+
+message GetFriendListRequest {
+    uint32 user_id = 1;
+}
+message GetFriendListResponse{
+    message UserFriend {
+        uint32 friend_id = 1;
+        uint32 group_id = 2;
+        string group_name = 3; // @gotags: json:"group_name"
+    }
+    repeated UserFriend user_friend_lists = 1;
+}

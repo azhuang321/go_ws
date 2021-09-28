@@ -43,7 +43,6 @@
             ,$ = layui.$
         //监听提交
         form.on('submit(formDemo)', function (data) {
-
             $.ajax({url:"http://wslhost:9001/v1/user/login",
                 method:"POST",
                 dataType:"json",
@@ -54,6 +53,8 @@
                             key: result.data.mobile,
                             value: result.data
                         })
+                        sessionStorage.setItem("login_username",result.data.mobile)
+                        window.location.href = "/mobile.html"
                         layer.msg(result.msg,{icon:1})
                     }else{
                         layer.msg(result.msg,{icon:2})

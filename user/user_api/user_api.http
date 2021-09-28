@@ -1,0 +1,11 @@
+### Send request with dynamic variables in request's body
+POST http://wslhost:9001/v1/user/register
+Content-Type: application/json
+
+{
+  "mobile": "13774246150",
+  "password": "123123",
+  "re_password": "123123",
+  "captcha_id":"Vxc8xCUdvrMen19XCeEC",
+  "code": "693666"
+}
