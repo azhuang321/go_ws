@@ -3,6 +3,7 @@ package handler
 import (
 	"chat_srv/model"
 	"chat_srv/proto/gen/chat_pb"
+	"chat_srv/utils"
 	"context"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
@@ -19,22 +20,28 @@ func (c ChatService) AddFriend(ctx context.Context, request *chat_pb.AddFriendRe
 }
 
 func (c ChatService) GetFriendList(ctx context.Context, request *chat_pb.GetFriendListRequest) (*chat_pb.GetFriendListResponse, error) {
-	userFriendList, err := model.GetUserFriendList(request.UserId)
+	userGroup,userFriendList, err := model.GetUserFriendList(request.UserId)
 	if err != nil {
 		return nil, status.Error(codes.Unknown, "未知错误")
 	}
+	utils.PrettyPrint(userGroup)
+	utils.PrettyPrint(userFriendList)
 
-	var userFriendListResp []*chat_pb.GetFriendListResponse_UserFriend
+	userFriendListResp := make([]*chat_pb.GetFriendListResponse_UserFriend,0)
 	for _, val := range userFriendList {
-		userFriend := &chat_pb.GetFriendListResponse_UserFriend{}
-		userFriend.FriendId = val["friend_id"].(uint32)
-		userFriend.GroupId = val["group_id"].(uint32)
-		if val["group_name"] != nil {
-			userFriend.GroupName = val["group_name"].(string)
-		} else {
-			userFriend.GroupName = ""
-		}
-		userFriendListResp = append(userFriendListResp, userFriend)
+		friendInfo := &chat_pb.GetFriendListResponse_UserFriend{}
+		friendInfo.FriendId = val.UserID
+		friendInfo.GroupId = val.GroupID
+		userFriendListResp = append(userFriendListResp,friendInfo)
 	}
-	return &chat_pb.GetFriendListResponse{UserFriendLists: userFriendListResp}, nil
+
+	userGroupResp := make([]*chat_pb.GetFriendListResponse_UserGroup,0)
+	for _, val := range userGroup {
+		groupInfo := &chat_pb.GetFriendListResponse_UserGroup{}
+		groupInfo.Id = val.ID
+		groupInfo.Name = val.Name
+		userGroupResp = append(userGroupResp, groupInfo)
+	}
+
+	return &chat_pb.GetFriendListResponse{UserFriendLists: userFriendListResp,UserGroup: userGroupResp}, nil
 }

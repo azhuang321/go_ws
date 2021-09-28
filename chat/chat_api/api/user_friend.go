@@ -35,38 +35,36 @@ func GetUserFriendList(ctx *gin.Context) {
 		return
 	}
 
-	group := map[uint32]interface{}{}
-	for _, val := range resp.UserFriendLists {
-		_, ok := group[val.GroupId]
-		var groupList []map[string]interface{}
-		groupInfo := map[string]interface{}{}
-
-		if !ok {
-			groupInfo["id"] = val.GroupId
-			groupInfo["groupname"] = val.GroupName
-			groupInfo["list"] = []map[string]interface{}{}
-		} else {
-			groupInfo = group[val.GroupId].(map[string]interface{})
-		}
-		groupList = groupInfo["list"].([]map[string]interface{})
-		for k, val2 := range userSrvResp.UsersInfo {
-			if val2.Id == val.FriendId {
-				userInfo := map[string]interface{}{}
-				userInfo["id"] = val2.Id
-				userInfo["username"] = val2.Mobile
-				userInfo["avatar"] = val2.Avatar
-				userInfo["sign"] = val2.Sign
-				groupList = append(groupList, userInfo)
-				userSrvResp.UsersInfo = append(userSrvResp.UsersInfo[:k], userSrvResp.UsersInfo[k+1:]...)
-			}
-		}
-		groupInfo["list"] = groupList
-		group[val.GroupId] = groupInfo
+	usersInfo := make(map[uint32]interface{},0)
+	for _, val := range userSrvResp.UsersInfo {
+		usersInfo[val.Id] = val
 	}
 
-	var returnData []interface{}
-	for _, val := range group {
-		returnData = append(returnData, val)
+	friendList := make(map[uint32]interface{},0)
+	for _, v1 := range resp.UserGroup {
+		groupInfo := make(map[string]interface{},0)
+		groupInfo["id"] = v1.Id
+		groupInfo["groupname"] = v1.Name
+		groupInfo["list"] = make([]map[string]interface{},0)
+		i := 0
+		for k2,v2 := range resp.UserFriendLists {
+			if v1.Id == v2.GroupId {
+				userFiendInfo := make(map[string]interface{},0)
+				userFiendInfo["id"] = v2.FriendId
+				userFiendInfo["username"] = usersInfo[v2.FriendId].(*userpb.GetUserInfoResponse).Mobile
+				userFiendInfo["avatar"] = usersInfo[v2.FriendId].(*userpb.GetUserInfoResponse).Avatar
+				userFiendInfo["sign"] = usersInfo[v2.FriendId].(*userpb.GetUserInfoResponse).Sign
+				groupInfo["list"] = append(groupInfo["list"].([]map[string]interface{}),userFiendInfo)
+				resp.UserFriendLists = append(resp.UserFriendLists[:k2 - i],resp.UserFriendLists[k2 - i:]...)
+				i++
+			}
+		}
+		friendList[v1.Id] = groupInfo
+	}
+
+	returnData := make([]interface{},0)
+	for _, v := range friendList {
+		returnData = append(returnData,v)
 	}
 	utils.OkReturn(ctx, returnData, "")
 }

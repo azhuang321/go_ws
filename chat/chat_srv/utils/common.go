@@ -1,10 +1,13 @@
 package utils
 
 import (
+	"bytes"
 	"chat_srv/global"
 	"crypto/md5"
 	"encoding/hex"
+	"encoding/json"
 	"flag"
+	"fmt"
 	"net"
 )
 
@@ -45,4 +48,19 @@ func GetArgs() map[string]interface{} {
 		"host": host,
 		"port": port,
 	}
+}
+
+func PrettyPrint(v interface{}) {
+	b, err := json.Marshal(v)
+	if err != nil {
+		fmt.Printf("打印错误:%s", err.Error())
+		return
+	}
+	var out bytes.Buffer
+	err = json.Indent(&out, b, "", "  ")
+	if err != nil {
+		fmt.Printf("打印错误:%s", err.Error())
+		return
+	}
+	fmt.Println(out.String())
 }

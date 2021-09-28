@@ -25,17 +25,23 @@ func (cu *UserFriend) AddUserFriend() error {
 	return nil
 }
 
-func (cu *UserFriend) GetUserFriendList() ([]map[string]interface{}, error) {
-	var userFriendList []map[string]interface{}
-	err := global.DB.Table("chat_user_friend AS a").Where("a.user_id = ?", cu.UserID).Select(
-		"a.friend_id", "a.group_id", "b.name group_name").Joins(
-		"left join chat_group b on a.group_id = b.id",
-	).Scan(&userFriendList).Error
-
-	if !errors.Is(err, gorm.ErrRecordNotFound) && err != nil {
-		return nil, err
-	} else if errors.Is(err, gorm.ErrRecordNotFound) {
-		return []map[string]interface{}{}, nil
+func (cu *UserFriend) GetUserFriendList() ([]*Group,[]*UserFriend, error) {
+	group := &Group{UserID:cu.UserID}
+	userGroups,err := group.UserGroup()
+	if err != nil {
+		return []*Group{},[]*UserFriend{}, nil
 	}
-	return userFriendList, nil
+	groupIds := make([]uint32, 0)
+	for _,val := range userGroups {
+		groupIds = append(groupIds,val.ID)
+	}
+
+	var userFriendList []*UserFriend
+	err = global.DB.Model(cu).Where("group_id in ?",groupIds).Where("user_id != ?",cu.UserID).Find(&userFriendList).Error
+	if !errors.Is(err, gorm.ErrRecordNotFound) && err != nil {
+		return nil,nil, err
+	} else if errors.Is(err, gorm.ErrRecordNotFound) {
+		return []*Group{},[]*UserFriend{}, nil
+	}
+	return userGroups,userFriendList, nil
 }

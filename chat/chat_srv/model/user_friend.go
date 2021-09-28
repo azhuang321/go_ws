@@ -30,12 +30,12 @@ func AddFriend(userId, friendId, groupId uint32) bool {
 	return true
 }
 
-func GetUserFriendList(userId uint32) ([]map[string]interface{}, error) {
+func GetUserFriendList(userId uint32) ([]*dao.Group,[]*dao.UserFriend,error) {
 	userFiend := dao.UserFriend{UserID: userId}
-	userFriendList, err := userFiend.GetUserFriendList()
+	userGroup,userFriendList, err := userFiend.GetUserFriendList()
 	if err != nil {
 		zap.S().Errorf("查询好友失败:%s", err.Error())
-		return nil, err
+		return nil,nil, err
 	}
-	return userFriendList, nil
+	return userGroup,userFriendList, nil
 }

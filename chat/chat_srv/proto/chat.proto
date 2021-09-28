@@ -21,7 +21,11 @@ message GetFriendListResponse{
     message UserFriend {
         uint32 friend_id = 1;
         uint32 group_id = 2;
-        string group_name = 3; // @gotags: json:"group_name"
     }
     repeated UserFriend user_friend_lists = 1;
+    message UserGroup {
+        uint32 id = 1;
+        string name = 2;
+    }
+    repeated UserGroup user_group = 2;
 }
