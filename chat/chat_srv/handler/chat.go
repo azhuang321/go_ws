@@ -3,7 +3,6 @@ package handler
 import (
 	"chat_srv/model"
 	"chat_srv/proto/gen/chat_pb"
-	"chat_srv/utils"
 	"context"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
@@ -24,13 +23,11 @@ func (c ChatService) GetFriendList(ctx context.Context, request *chat_pb.GetFrie
 	if err != nil {
 		return nil, status.Error(codes.Unknown, "未知错误")
 	}
-	utils.PrettyPrint(userGroup)
-	utils.PrettyPrint(userFriendList)
 
 	userFriendListResp := make([]*chat_pb.GetFriendListResponse_UserFriend,0)
 	for _, val := range userFriendList {
 		friendInfo := &chat_pb.GetFriendListResponse_UserFriend{}
-		friendInfo.FriendId = val.UserID
+		friendInfo.FriendId = val.FriendID
 		friendInfo.GroupId = val.GroupID
 		userFriendListResp = append(userFriendListResp,friendInfo)
 	}

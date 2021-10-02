@@ -1,6 +1,9 @@
 package utils
 
 import (
+	"bytes"
+	"encoding/json"
+	"fmt"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
 	"net/http"
@@ -61,4 +64,19 @@ func HandleGrpcErrorToHttp(err error, c *gin.Context) {
 		}
 	}
 	return
+}
+
+func PrettyPrint(v interface{}) {
+	b, err := json.Marshal(v)
+	if err != nil {
+		fmt.Printf("打印错误:%s", err.Error())
+		return
+	}
+	var out bytes.Buffer
+	err = json.Indent(&out, b, "", "  ")
+	if err != nil {
+		fmt.Printf("打印错误:%s", err.Error())
+		return
+	}
+	fmt.Println(out.String())
 }

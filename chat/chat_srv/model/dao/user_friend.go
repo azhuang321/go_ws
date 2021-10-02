@@ -37,7 +37,7 @@ func (cu *UserFriend) GetUserFriendList() ([]*Group,[]*UserFriend, error) {
 	}
 
 	var userFriendList []*UserFriend
-	err = global.DB.Model(cu).Where("group_id in ?",groupIds).Where("user_id != ?",cu.UserID).Find(&userFriendList).Error
+	err = global.DB.Model(cu).Where("group_id in ?",groupIds).Where("user_id = ?",cu.UserID).Find(&userFriendList).Error
 	if !errors.Is(err, gorm.ErrRecordNotFound) && err != nil {
 		return nil,nil, err
 	} else if errors.Is(err, gorm.ErrRecordNotFound) {

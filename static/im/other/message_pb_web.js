@@ -1347,8 +1347,7 @@ proto.Msg.ReceiveInfo.prototype.setTimestamp = function(value) {
  */
 proto.Msg.MsgType = {
   PING: 0,
-  AUTH: 1,
-  TEXT: 2
+  TEXT: 1
 };
 
 /**

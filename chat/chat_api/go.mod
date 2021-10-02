@@ -8,9 +8,10 @@ require (
 	github.com/gin-gonic/gin v1.7.4
 	github.com/go-redis/redis/v8 v8.11.3
 	github.com/gookit/validate v1.2.11
+	github.com/iancoleman/orderedmap v0.2.0
 	github.com/kr/text v0.2.0 // indirect
 	github.com/mbobakov/grpc-consul-resolver v1.4.4
-	github.com/mojocn/base64Captcha v1.3.5
+	github.com/mojocn/base64Captcha v1.3.5 // indirect
 	github.com/natefinch/lumberjack v2.0.0+incompatible
 	github.com/niemeyer/pretty v0.0.0-20200227124842-a10e7caefd8e // indirect
 	github.com/spf13/viper v1.9.0

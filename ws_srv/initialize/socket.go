@@ -6,6 +6,5 @@ import (
 )
 
 func InitSocketRouter() {
-	global.SocketRouter["/auth"] = handler.Auth
 	global.SocketRouter["/chat"] = handler.Chat
 }

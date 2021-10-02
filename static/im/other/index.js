@@ -19,7 +19,7 @@ function WebsocketHeartbeatJs({
     this.repeat = 0;
 
     //override hook function
-    this.onclose = () => {};
+    this.onclose = (event) => {};
     this.onerror = () => {};
     this.onopen = () => {};
     this.onmessage = () => {};
@@ -43,11 +43,7 @@ WebsocketHeartbeatJs.prototype.setBinaryType = function(){
 
 WebsocketHeartbeatJs.prototype.initEventHandle = function(){
     this.ws.onclose = (event) => {
-        console.dir(event)
-        var code = event.code;
-        var reason = event.reason;
-        var wasClean = event.wasClean;
-        this.onclose();
+        this.onclose(event);
         this.reconnect();
     };
     this.ws.onerror = (event) => {

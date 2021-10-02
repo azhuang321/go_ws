@@ -242,7 +242,7 @@ layui.define(['laytpl', 'upload', 'layer-mobile', 'zepto'], function(exports){
           ,'<i class="layui-icon {{item.iconClass||\"\"}}">{{item.iconUnicode||""}}</i>{{item.title}}<i class="layim-new" id="LAY_layimNew{{ item.alias }}"></i>'
         ,'</li>'
         ,'{{# }); if(!d.base.copyright){ }}'
-        ,'<li layim-event="about"><i class="layui-icon">&#xe60b;</i>关于<i class="layim-new" id="LAY_layimNewAbout"></i></li>'
+        // ,'<li layim-event="about"><i class="layui-icon">&#xe60b;</i>关于<i class="layim-new" id="LAY_layimNewAbout"></i></li>'
         ,'{{# } }}'
       ,'</ul>'
     ,'</div>'

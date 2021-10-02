@@ -14,8 +14,7 @@ message Msg {
 
 enum MsgType {
     PING = 0;
-    AUTH = 1;
-    TEXT = 2;
+    TEXT = 1;
 }
 
 enum ChatType{

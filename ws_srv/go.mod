@@ -3,6 +3,7 @@ module ws_srv
 go 1.15
 
 require (
+	github.com/apache/rocketmq-client-go/v2 v2.1.0
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible
 	github.com/fsnotify/fsnotify v1.5.1
 	github.com/gin-gonic/gin v1.7.4

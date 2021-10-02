@@ -30,9 +30,4 @@ var (
 
 	UserSrvErr = &Errno{Code:    100101, Message: "用户服务错误"}
 
-	ErrUserNotFound  = &Errno{Code: 20101, Message: "用户不存在"}
-	ErrRequestParams = &Errno{Code: 20102, Message: "请求参数错误"}
-	ErrUserIsExist  = &Errno{Code: 20103, Message: "用户已存在"}
-	ErrUserPassword  = &Errno{Code: 20104, Message: "用户密码错误"}
-
 )

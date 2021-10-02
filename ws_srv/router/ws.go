@@ -9,9 +9,6 @@ import (
 )
 
 func InitWsRouter(Router *gin.RouterGroup) {
-	zap.S().Infof("配置用户相关router")
-	UserRouterGroup := Router.Group("ws")
-	{
-		UserRouterGroup.GET("test", middlewares.JWTAuth(), api.Test)
-	}
+	zap.S().Infof("配置websocket router")
+	Router.GET("websocket", middlewares.JWTAuth(), api.WebSocket)
 }

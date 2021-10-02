@@ -9,6 +9,8 @@ import (
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
 	"net/http"
+	"github.com/iancoleman/orderedmap"
+	"sort"
 )
 
 func GetUserFriendList(ctx *gin.Context) {
@@ -23,6 +25,7 @@ func GetUserFriendList(ctx *gin.Context) {
 		utils.ErrReturn(ctx, http.StatusBadRequest, errno.ChatSrvErr)
 		return
 	}
+
 	// 查询用户名
 	var friendIds []uint32
 	for _, val := range resp.UserFriendLists {
@@ -40,7 +43,8 @@ func GetUserFriendList(ctx *gin.Context) {
 		usersInfo[val.Id] = val
 	}
 
-	friendList := make(map[uint32]interface{},0)
+	groupList := orderedmap.New()
+
 	for _, v1 := range resp.UserGroup {
 		groupInfo := make(map[string]interface{},0)
 		groupInfo["id"] = v1.Id
@@ -59,12 +63,15 @@ func GetUserFriendList(ctx *gin.Context) {
 				i++
 			}
 		}
-		friendList[v1.Id] = groupInfo
+		groupList.Set(string(int32(v1.Id)),groupInfo)
 	}
+	groupList.SortKeys(sort.Strings)
 
 	returnData := make([]interface{},0)
-	for _, v := range friendList {
+	for _, k := range groupList.Keys() {
+		v, _ := groupList.Get(k)
 		returnData = append(returnData,v)
 	}
+
 	utils.OkReturn(ctx, returnData, "")
 }
